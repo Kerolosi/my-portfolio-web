@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kerolos Ibrahim Saeed | Cybersecurity Student &amp; Penetration Testing</title>
+<meta name="description" content="Cybersecurity student training in penetration testing, web application security and Active Directory. Labs, write-ups and certificates.">
+<style>
+/* ============ PALETTE: كل الألوان هنا ============ */
+:root{
+  --bg:#ffffff; --bg2:#f5f6f8; --fg:#111111; --muted:#4b5563; --faint:#6b7280;
+  --line:#e2e5ea; --line2:#cbd0d8;
+  --accent:#111111; --accent-fg:#ffffff;
+  --term-bg:#0d1117; --term-fg:#c9d1d9; --term-prompt:#3fb950; --term-dim:#8b949e; --term-bar:#161b22;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b0b0c; --bg2:#141416; --fg:#f3f4f6; --muted:#c3c7ce; --faint:#9ca3af;
+    --line:#26272b; --line2:#3a3b40; --accent:#f3f4f6; --accent-fg:#0b0b0c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b0b0c; --bg2:#141416; --fg:#f3f4f6; --muted:#c3c7ce; --faint:#9ca3af;
+  --line:#26272b; --line2:#3a3b40; --accent:#f3f4f6; --accent-fg:#0b0b0c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden;scroll-padding-top:calc(5.5rem + env(safe-area-inset-top,0px))}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+body{background:var(--bg);color:var(--fg);font-family:Arial,Helvetica,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;font-size:16px}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:3px solid #2563eb;outline-offset:3px}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1.5rem}
+[hidden]{display:none!important}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+/* ---------- header ---------- */
+header.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--bg);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:4.5rem;gap:1rem}
+.brand{font-weight:900;font-size:1.1rem;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+.nav-links{display:flex;gap:1.1rem;font-size:.82rem;font-weight:600;color:var(--muted)}
+.nav-links a:hover{color:var(--fg)}
+.nav-right{display:flex;align-items:center;gap:.6rem}
+.tbtn{border:1px solid var(--line2);background:var(--bg);color:var(--fg);font:inherit;font-size:.78rem;font-weight:700;padding:.5rem .8rem;white-space:nowrap}
+.tbtn:hover{background:var(--bg2)}
+.tbtn.solid{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.tbtn.solid:hover{opacity:.88}
+.burger-btn{display:none;width:2.75rem;height:2.75rem;border:1px solid var(--line2);background:var(--bg);color:var(--fg);font-weight:800}
+@media (max-width:1180px){.nav-links{display:none}.burger-btn{display:block}}
+.mobile-menu{display:none;border-top:1px solid var(--line);background:var(--bg2)}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:block;padding:.95rem 1.5rem;border-bottom:1px solid var(--line);font-size:.95rem;color:var(--muted)}
+.mobile-menu a.w{font-weight:700;color:var(--fg)}
+
+/* ---------- rail ---------- */
+.rail{position:fixed;left:22px;top:0;bottom:0;width:20px;z-index:40;display:none;align-items:center;justify-content:center;pointer-events:none}
+@media(min-width:1240px){.rail{display:flex}}
+.rail-line{position:absolute;top:10%;bottom:10%;width:1px;background:var(--line2)}
+.rail-fill{position:absolute;top:10%;width:1px;background:var(--fg);height:0;transition:height .3s}
+.rail-dots{position:relative;height:80%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:auto}
+.rail-dot{width:9px;height:9px;border:1px solid var(--line2);background:var(--bg);transform:rotate(45deg);cursor:pointer;transition:.25s}
+.rail-dot.active{background:var(--fg);border-color:var(--fg)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;padding:3.5rem 0 5rem;overflow:hidden;border-bottom:1px solid var(--line);background:var(--bg2)}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;color:var(--fg);pointer-events:none}
+.hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.15fr 1fr;gap:3rem;align-items:center}
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr;gap:2.5rem}}
+h1.name{font-size:clamp(2.8rem,7vw,5.2rem);line-height:1;font-weight:900;letter-spacing:-.02em;margin-bottom:1.4rem}
+.kicker{font-size:clamp(1.1rem,2vw,1.35rem);font-weight:700;margin-bottom:.4rem}
+.role{font-size:clamp(.9rem,1.6vw,1.02rem);color:var(--muted);margin-bottom:1.4rem}
+.hero-copy{max-width:34rem;color:var(--muted);margin-bottom:1.4rem}
+.tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.6rem}
+.tags span{font-size:.7rem;font-weight:700;color:var(--faint);border:1px solid var(--line2);padding:.3rem .7rem;border-radius:99px}
+.loc{font-size:.8rem;color:var(--faint);margin-bottom:1.8rem}
+.cta{display:flex;flex-wrap:wrap;gap:.75rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.85rem 1.35rem;font-weight:700;font-size:.9rem;border:2px solid var(--fg);background:transparent;color:var(--fg);min-height:2.75rem}
+.btn:hover{background:var(--fg);color:var(--bg)}
+.btn.solid{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn.solid:hover{opacity:.88}
+@media(max-width:420px){.cta .btn{width:100%}}
+
+/* terminal */
+.term{background:var(--term-bg);color:var(--term-fg);border:1px solid #30363d;border-radius:8px;overflow:hidden;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.8rem;line-height:1.75;align-self:start}
+.term .bar{background:var(--term-bar);padding:.5rem .8rem;display:flex;align-items:center;gap:.4rem;border-bottom:1px solid #30363d}
+.term .dot{width:.65rem;height:.65rem;border-radius:50%;display:inline-block}
+.term .dot:nth-child(1){background:#ff5f56}.term .dot:nth-child(2){background:#ffbd2e}.term .dot:nth-child(3){background:#27c93f}
+.term .ttl{margin-left:.6rem;color:var(--term-dim);font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term pre{margin:0;padding:1rem;overflow-x:auto;white-space:pre}
+.term .p{color:var(--term-prompt)}.term .c{color:var(--term-dim)}
+.term.sm{font-size:.72rem}.term.sm pre{padding:.75rem .85rem}
+
+/* stats */
+.stats{background:var(--accent);color:var(--accent-fg);padding:2.6rem 0}
+.stats .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
+.stats b{display:block;font-size:clamp(1.6rem,4vw,2.25rem);font-weight:900}
+.stats span{font-size:.78rem;opacity:.7}
+@media(max-width:720px){.stats .grid{grid-template-columns:repeat(2,1fr)}}
+
+/* sections */
+section.s{padding:5.5rem 0;border-bottom:1px solid var(--line)}
+section.s.alt{background:var(--bg2)}
+.head{margin-bottom:1.4rem}
+h2.title{font-size:clamp(2rem,5.5vw,3.3rem);line-height:1.05;font-weight:900;letter-spacing:-.02em;display:flex;align-items:center;gap:.9rem;margin-bottom:.6rem}
+h2.title i{width:.7rem;height:.7rem;background:var(--fg);transform:rotate(45deg);flex:none;display:inline-block}
+.sub{color:var(--muted);font-size:1.05rem;max-width:40rem}
+.lede{color:var(--muted);max-width:40rem;margin-top:.5rem}
+.body{margin-top:2.2rem}
+[data-reveal]{opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s}
+[data-reveal].in{opacity:1;transform:none}
+.in-modal [data-reveal]{opacity:1;transform:none}
+
+/* about */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+@media(max-width:820px){.about-grid{grid-template-columns:1fr}}
+.about-grid p{color:var(--muted);margin-bottom:1rem}
+.focus-item{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:.9rem 0;border-bottom:1px solid var(--line);font-size:.93rem}
+.focus-item:first-child{border-top:1px solid var(--line)}
+.focus-item .v{color:var(--faint);font-size:.8rem;text-align:right}
+.usp{margin-top:1.8rem;background:var(--bg2);border:1px solid var(--line);padding:1.2rem;font-size:.88rem;font-weight:600}
+.usp hr{border:0;border-top:1px solid var(--line);margin:.8rem 0}
+
+/* skills */
+.skills-cols{display:grid;grid-template-columns:1.4fr 1fr;gap:3rem}
+@media(max-width:820px){.skills-cols{grid-template-columns:1fr;gap:2rem}}
+.gt{font-size:.78rem;color:var(--faint);margin-bottom:1rem;font-weight:700}
+.skill-row{display:grid;grid-template-columns:1fr auto;gap:.3rem 1rem;padding:.9rem 0;border-bottom:1px solid var(--line);align-items:center}
+.skill-row:first-of-type{border-top:1px solid var(--line)}
+.skill-row .n{font-weight:700;font-size:.93rem}
+.skill-row .e{grid-column:1 / -1;font-size:.83rem;color:var(--muted)}
+.lv{display:flex;align-items:center;gap:.6rem}
+.lv span{font-size:.72rem;color:var(--faint);width:5.5rem;text-align:right}
+.bars{display:flex;gap:3px}.bar{width:4px;height:12px;background:var(--line2)}.bar.on{background:var(--fg)}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{font-size:.75rem;font-weight:700;padding:.28rem .65rem;border:1px solid var(--line2);background:var(--bg)}
+.chip.dash{border-style:dashed;background:transparent}
+.lang-row{display:flex;justify-content:space-between;padding:.7rem 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.lang-row:first-child{border-top:1px solid var(--line)}
+.lang-row .v{color:var(--faint);font-size:.8rem}
+
+/* timeline */
+.timeline{position:relative;padding-left:2rem}
+.timeline::before{content:"";position:absolute;left:4px;top:6px;bottom:6px;width:1px;background:var(--line2)}
+.tl-item{position:relative;padding-bottom:2.6rem}.tl-item:last-child{padding-bottom:0}
+.tl-item::before{content:"";position:absolute;left:-2rem;top:.35rem;width:9px;height:9px;background:var(--bg);border:1px solid var(--fg);transform:rotate(45deg)}
+.tl-item.cur::before{background:var(--fg)}
+.tl-when{font-size:.78rem;font-weight:700;color:var(--faint);margin-bottom:.4rem;display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.tl-role{font-size:1.15rem;font-weight:800}
+.tl-org{color:var(--muted);font-size:.92rem;margin-bottom:.9rem}
+.tl-list{list-style:none;display:flex;flex-direction:column;gap:.5rem}
+.tl-list li{color:var(--muted);font-size:.92rem;padding-left:1rem;position:relative}
+.tl-list li::before{content:"-";position:absolute;left:0;color:var(--faint)}
+.badge{font-size:.66rem;font-weight:700;border:1px solid var(--fg);padding:.1rem .5rem;border-radius:99px}
+
+/* cards */
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+@media(max-width:900px){.grid3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--bg);border:1px solid var(--line);padding:1.4rem}
+.alt .card{background:var(--bg)}
+.card.cur{border-color:var(--fg)}
+.card h3{font-size:1.05rem;font-weight:800;margin-bottom:.4rem}
+.card p{font-size:.9rem;color:var(--muted)}
+.card .when{font-size:.75rem;font-weight:700;color:var(--faint);margin-bottom:.6rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.card .org{font-size:.88rem;color:var(--muted);margin-bottom:.8rem}
+.topics{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem}
+.topics span{font-size:.7rem;color:var(--faint);border:1px solid var(--line);padding:.2rem .5rem}
+.card .for{font-size:.8rem;color:var(--faint);margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--line)}
+.dashed{border-style:dashed;border-color:var(--line2);background:transparent!important}
+.note{margin-top:1.4rem;font-size:.85rem;color:var(--muted);max-width:44rem}
+.link-btn{display:inline-block;margin-top:1rem;background:var(--accent);color:var(--accent-fg);font-size:.8rem;font-weight:700;padding:.7rem 1rem}
+
+/* projects */
+.pcard{display:flex;flex-direction:column;gap:.7rem}
+.pcard .cat{font-size:.72rem;font-weight:700;color:var(--faint)}
+.pcard h3{font-size:1.2rem;line-height:1.25}
+.pcard .pb{align-self:flex-start;margin-top:auto}
+
+/* contact */
+.contact-in{display:grid;grid-template-columns:1fr 1fr;gap:3rem}
+@media(max-width:820px){.contact-in{grid-template-columns:1fr;gap:2rem}}
+.crow{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;padding:.95rem 0;border-bottom:1px solid var(--line)}
+.crow:first-child{border-top:1px solid var(--line)}
+.crow .k{font-size:.76rem;font-weight:700;color:var(--faint)}
+.crow .v{font-size:.95rem;text-align:right;overflow-wrap:anywhere;min-width:0}
+.crow a:hover{text-decoration:underline}
+.panel{background:var(--bg);border:1px solid var(--line);padding:1.6rem}
+.panel>p{color:var(--muted);font-size:.92rem;margin-bottom:1.2rem}
+form{display:grid;gap:1rem}
+label{display:block;font-size:.76rem;font-weight:700;margin-bottom:.4rem}
+.hint{font-weight:400;color:var(--faint)}
+input,select,textarea{width:100%;border:1px solid var(--line2);background:var(--bg);color:var(--fg);padding:.7rem;font-size:.9rem;font-family:inherit}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:620px){.row2{grid-template-columns:1fr}}
+button.send{width:100%;background:var(--accent);color:var(--accent-fg);font-weight:900;font-size:.9rem;padding:.95rem;border:0;transition:background 0.3s, opacity 0.3s}
+footer.site{padding:2.2rem 0;background:var(--bg2);font-size:.78rem;color:var(--muted)}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.8rem}
+
+/* certificates view */
+#certs{padding:4rem 0}
+.back{font-size:.9rem;font-weight:600;color:var(--muted)}
+.page-title{font-size:clamp(2rem,5vw,3rem);font-weight:900;margin:1.4rem 0 .6rem}
+.csec{margin-top:3rem}.csec h2{font-size:1.5rem;font-weight:900;margin-bottom:1.2rem}
+
+/* modals */
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:1.2rem}
+.modal.open{display:flex}
+.modal .bd{position:absolute;inset:0;background:rgba(0,0,0,.72)}
+.modal .pn{position:relative;background:var(--bg);color:var(--fg);border:1px solid var(--line2);max-width:48rem;width:100%;max-height:86vh;overflow-y:auto;padding:2.4rem}
+@media(max-width:640px){.modal .pn{padding:1.6rem 1.2rem}}
+.modal .x{position:absolute;top:.8rem;right:.8rem;width:2.4rem;height:2.4rem;border:1px solid var(--line2);background:var(--bg2);color:var(--fg);font-weight:800}
+#projectModal{z-index:400}
+.pn h2.title{font-size:clamp(1.6rem,4.5vw,2.2rem)}
+.pblock{margin-top:1.6rem}
+.pblock h4{font-size:.76rem;font-weight:700;color:var(--faint);margin-bottom:.7rem}
+.empty{border:1px dashed var(--line2);padding:1rem;color:var(--faint);font-size:.88rem}
+
+/* world */
+</style>
+</head>
+<body>
+
+<div class="rail" id="rail" aria-hidden="true"><div class="rail-line"></div><div class="rail-fill" id="railFill"></div><div class="rail-dots" id="railDots"></div></div>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="brand" href="#/" data-home>Kerolos Ibrahim</a>
+    <nav class="nav-links" id="navLinks"></nav>
+    <div class="nav-right">
+      <button class="tbtn" id="theme" type="button" aria-label="Switch light and dark mode">Dark mode</button>
+      <button class="burger-btn" id="burger" type="button" aria-label="Open menu" aria-expanded="false">≡</button>
+    </div>
+  </div>
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile"></nav>
+</header>
+
+<main id="home">
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <canvas id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="wrap hero-inner">
+      <div>
+        <h1 class="name">Kerolos<br>Ibrahim Saeed</h1>
+        <div class="kicker">Cybersecurity Student</div>
+        <div class="role mono">Web · Network · Internal Penetration Testing</div>
+        <p class="hero-copy">I build security labs, break them on purpose, and write down how to fix what I find. I'm training in penetration testing through DEPI, with hands-on practice on TryHackMe and PortSwigger.</p>
+        <div class="tags"><span>PENETRATION TESTING</span><span>NETWORK SECURITY</span><span>ACTIVE DIRECTORY</span></div>
+        <div class="loc mono">Cairo, Egypt</div>
+        <div class="cta">
+          <a class="btn solid" href="#projects" data-anchor>View My Work</a>
+          <a class="btn" href="#skills" data-anchor>Explore My Skills</a>
+          <a class="btn" href="#contact" data-anchor>Contact Me</a>
+        </div>
+      </div>
+      <div id="heroTerm"></div>
+    </div>
+  </section>
+  <section class="stats"><div class="wrap grid" id="stats"></div></section>
+  <div id="sections"></div>
+</main>
+
+<main id="certs" hidden>
+  <div class="wrap" style="max-width:62rem">
+    <a class="back" href="#/" data-home>← Back to home</a>
+    <h1 class="page-title">Certificates</h1>
+    <p class="lede">Certificates I have completed, training I'm currently in, and certifications I'm preparing for. Anything not earned yet is clearly marked.</p>
+    <div class="csec"><h2>Completed</h2><div class="grid2" id="certList"></div></div>
+    <div class="csec"><h2>Training programs</h2><div class="grid1" id="trainList" style="display:grid;gap:1rem"></div></div>
+    <div class="csec"><h2 style="margin-bottom:.3rem">In progress</h2><p style="font-size:.9rem;color:var(--muted);margin-bottom:1.2rem">Not earned yet.</p><div class="grid2" id="progList"></div></div>
+  </div>
+</main>
+
+<footer class="site"><div class="wrap foot"><span id="yr"></span><span>Built section by section, same as the skills behind it.</span></div></footer>
+
+<div class="modal" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="pmTitle"><div class="bd" id="pmBd"></div><div class="pn in-modal"><button class="x" id="pmX" type="button" aria-label="Close project details">✕</button><div id="pmBody"></div></div></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const chips = (a,c="") => a.map(x=>`<span class="chip ${c}">${x}</span>`).join("");
+
+/* terminal: "$ " = prompt line, "# " or "! " = dim comment */
+function term(title, lines, cls=""){
+  const body = lines.map(l=>{
+    if(l.startsWith("$ ")) return `<span class="p">$</span> ${esc(l.slice(2))}`;
+    if(l.startsWith("# ")||l.startsWith("! ")) return `<span class="c">${esc(l)}</span>`;
+    return esc(l);
+  }).join("\n");
+  return `<div class="term ${cls}"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">${esc(title)}</span></div><pre>${body}</pre></div>`;
+}
+
+/* ====================================================================
+   كل المحتوى هنا. عدّل أي حاجة من الـ DATA وهتتغير في الموقع كله والـ World.
+   ==================================================================== */
+const DATA = {
+  stats:[["Top 15%","TryHackMe ranking"],["30","TryHackMe rooms completed"],["7 / 3","TryHackMe badges / paths"],["20+","PortSwigger Academy labs"]],
+
+  /* level: 1 Learning, 2 Foundation, 3 Hands-on. عدّل المستويات على حقيقتك. */
+  levelLabel:{1:"Learning",2:"Foundation",3:"Hands-on"},
+  skills:[
+    {n:"Web application testing",l:3,e:"20+ PortSwigger labs: SQL injection, XSS, CSRF, authentication flaws, with Burp Suite."},
+    {n:"Reconnaissance & enumeration",l:3,e:"30 TryHackMe rooms using Nmap, Gobuster, Nikto and Netcat."},
+    {n:"Exploitation & privilege escalation",l:2,e:"Linux and Windows privilege escalation in labs, Metasploit for initial access."},
+    {n:"Active Directory & Windows Server",l:2,e:"Multi-VM home lab on UTM with a domain and Linux machines."},
+    {n:"Network design & security",l:3,e:"Five-VLAN network with DMZ, ACLs and NAT/PAT. Cisco CCNA coursework."},
+    {n:"Traffic analysis",l:3,e:"Wireshark captures of logins and scans in my own lab network."},
+    {n:"Linux administration",l:3,e:"Red Hat System Administration I. Kali Linux and the command line every day."},
+    {n:"Scripting",l:2,e:"Python, Bash and C# for small automation and exercises."},
+    {n:"Android penetration testing",l:1,e:"Covered in the DEPI track, which is still ongoing."}],
+  toolsUsed:["Nmap","Burp Suite","Metasploit","Netcat","Wireshark","Gobuster","Nikto","Kali Linux","Cisco Packet Tracer","UTM"],
+  toolsLearn:["BloodHound","Impacket","NetExec","Responder","ffuf","SQLmap","Hashcat","John the Ripper","Hydra"],
+  languages:[["Arabic","Native"],["English","Intermediate"],["German","A1"]],
+
+  experience:[
+    {when:"Ongoing",cur:true,role:"Vulnerability Analyst & Penetration Tester Track",org:"Digital Egypt Pioneers Initiative (DEPI)",
+     pts:["Training in network and web penetration testing, vulnerability assessment and the OWASP Top 10.","Practice with Burp Suite and Android penetration testing.","Hands-on security labs and a cybersecurity capstone project."]},
+    {when:"Self-directed",role:"Security Labs & Practice",org:"Home lab, PortSwigger Web Security Academy, TryHackMe",
+     pts:["Built and attacked a multi-VM Windows/Linux lab for reconnaissance, traffic analysis and privilege escalation.","Completed 20+ PortSwigger labs and 30 TryHackMe rooms.","Designed a 5-VLAN enterprise network with DMZ, ACLs and NAT/PAT in Cisco Packet Tracer."]}],
+
+  education:{when:"Expected 2027",degree:"Bachelor's degree, Information Technology",org:"Assiut International Technological University",major:"Focus: cybersecurity and networking"},
+
+  /* الشهادات المكتملة. proof = لينك لما يجهز. */
+  /* meta (4th item) = verified detail from the certificate itself — course length / completion date / verification code */
+  certs:[
+    ["Networking","CCNA: Introduction to Networks","Cisco Networking Academy, via ITI","Completed 22 Feb 2026"],
+    ["Networking","CCNA: Switching, Routing, and Wireless Essentials","Cisco Networking Academy, via ITI","Completed 30 Sep 2026"],
+    ["Linux","Red Hat System Administration I","Mahara-Tech (ITI)","9h 11m · Completed 06/05/26 · Verification: GK5iPxPsMh"],
+    ["Security","Ethical Hacking","Mahara-Tech (ITI)","3h 29m · Completed 05/05/26 · Verification: gd2Opn3BrB"],
+    ["Security","Cybersecurity for Beginners","Mahara-Tech (ITI) — 8 courses","35h · Completed 06/05/26 · Verification: TkDNxna1gv"],
+    ["Programming","Python Programming Basics","Mahara-Tech (ITI)","1h 38m · Completed 05/05/26 · Verification: LEARuVCG3G"]
+  ],
+  training:[
+    {cur:true,when:"Ongoing",title:"Vulnerability Analyst & Penetration Tester Track",org:"Digital Egypt Pioneers Initiative (DEPI)",topics:["Network & web pentesting","Vulnerability assessment","OWASP Top 10","Burp Suite","Android pentesting"]},
+    {when:"20+ labs completed",title:"Web Security Academy",org:"PortSwigger",topics:["SQL injection","XSS","CSRF","Authentication"]}],
+  progress:[
+    {title:"eJPT: Junior Penetration Tester",org:"INE Security",note:"Studying. Not earned yet."},
+    {title:"eWPT: Web Application Penetration Tester",org:"INE Security",note:"Planned after eJPT. Not earned yet."}],
+
+  services:[
+    ["Web application security check","I test a website or web app for common OWASP Top 10 problems (SQL injection, XSS, CSRF, weak login handling) and send a report with fix steps.","Good for: small business sites, student startups"],
+    ["Vulnerability assessment","I scan and enumerate a host or small network, then list what is exposed or outdated, ordered by how serious it is.","Good for: office networks, servers, home labs"],
+    ["Network segmentation review","I look at your VLAN, ACL and NAT/firewall design and point out where traffic can move more freely than it should.","Good for: offices that grew without a plan"],
+    ["Windows / Linux hardening checklist","I go through a server against a basic hardening checklist and write down what to change first.","Good for: new servers, small IT teams"],
+    ["Internship or junior role","Penetration testing, vulnerability analysis or security support. I learn fast and I document my work.","Good for: teams that want to train a motivated junior"],
+    ["Something else","If your problem is security-related and not on this list, write to me. If it is outside what I can do well, I will say so.","Good for: questions you're not sure how to ask"]],
+
+  achievements:[
+    {t:"Top 15% on TryHackMe",d:"Ranking on the platform, with 30 rooms completed, 7 badges and 3 learning paths."},
+    {t:"20+ PortSwigger labs",d:"Completed hands-on labs on SQL injection, XSS, CSRF, authentication and HTTP testing."},
+    {t:"5-VLAN network with DMZ",d:"Designed and configured an enterprise network with ACLs, NAT/PAT and firewall policies."},
+    {t:"DEPI Penetration Testing Track",cur:true,d:"Currently completing the Vulnerability Analyst & Penetration Tester track."}],
+
+  process:[["1. We agree on scope","Before testing anything we write down what is in scope, what is not, and when I can test. I only touch systems I have permission for."],["2. I test and keep notes","I work step by step and record commands, results and screenshots, so nothing depends on my memory."],["3. I explain in plain language","Every finding says what I found, why it matters for your business, and how to fix it."],["4. We check the fix","After you fix something, I repeat the same test so we both know the hole is closed."]],
+
+  projects:[
+    {id:"ad-lab",cat:"Active Directory",title:"Multi-VM Windows & Linux Home Lab",
+     sum:"A multi-VM lab with Windows Server, Active Directory and Linux machines on UTM, used to practice attacks and see what they look like on the network.",
+     tech:["Windows Server","Active Directory","Kali Linux","Wireshark","UTM"],
+     did:["Built a multi-VM lab with Windows Server, Active Directory and Linux machines on UTM.","Practiced reconnaissance, network security, traffic analysis and privilege escalation.","Used Wireshark captures to see what each step looks like on the wire."],
+     tt:"kali@lab: ~/ad-lab",tl:["$ nmap -sV -O -oN dc01.txt 192.168.56.10","$ nmap -p 88,389,445 --open 192.168.56.0/24","$ tshark -r login.pcapng -Y kerberos","# findings and fixes go in notes/dc01.md"],
+     /* real run from a completed TryHackMe AD room — credentials and the flag are intentionally redacted */
+     proofTitle:"keroo@kali: ~/THM/Attacktive Directory",
+     proofLines:["$ cat cred.txt","user: [redacted]","passwd: [redacted]","# credentials recovered during the room's credential-harvesting stage","$ crackmapexec smb <target> -u '[redacted]' -p '[redacted]'","[+] [redacted]:445 ATTACKTIVEDIREC [+] authentication confirmed against the domain","$ cat root.txt","[flag redacted]","# full command log kept private — the room's credentials/flag aren't shared publicly"]},
+    {id:"vlan-lab",cat:"Network security",title:"5-VLAN Enterprise Network with DMZ",
+     sum:"An enterprise network in Cisco Packet Tracer with DMZ and management segments, ACLs, NAT/PAT and firewall policies.",
+     tech:["Cisco Packet Tracer","VLANs","ACLs","NAT/PAT"],
+     did:["Designed a five-VLAN network with DMZ and management segmentation.","Implemented ACLs, NAT/PAT and firewall security policies.","Tested which traffic each segment could and could not reach."],
+     tt:"Router CLI: dmz-acl",tl:["Switch(config)# vlan 30","Switch(config-vlan)# name DMZ","Router(config)# ip access-list extended DMZ-IN","Router(config-ext-nacl)# permit tcp any host 192.168.30.10 eq 443","Router(config-ext-nacl)# deny ip any 192.168.10.0 0.0.0.255"]},
+    {id:"portswigger",cat:"Web security",title:"PortSwigger Web Security Academy",
+     sum:"20+ hands-on labs on SQL injection, XSS, CSRF, authentication and HTTP testing with Burp Suite.",
+     tech:["Burp Suite","SQLi","XSS","CSRF","Authentication"],
+     did:["Completed 20+ labs covering SQL injection, XSS, CSRF, authentication vulnerabilities and HTTP testing.","Used Burp Suite to intercept, modify and replay requests.","For each lab: the payload, why it worked and how to prevent it."],
+     tt:"kali@lab: ~/portswigger",tl:["$ curl -i \"https://LAB-ID.web-security-academy.net/filter?category=Gifts'--\"","# same request, replayed and edited in Burp Repeater","# each lab: payload, why it worked, how to prevent it"]},
+    {id:"thm",cat:"Reconnaissance & exploitation",title:"TryHackMe: Linux Exploitation & Privilege Escalation",labs:true,
+     sum:"30 rooms on reconnaissance, enumeration, Linux exploitation and privilege escalation. Top 15% ranking.",
+     tech:["Nmap","Netcat","Kali Linux","Linux privesc"],
+     did:["Worked through 30 rooms on reconnaissance, enumeration, Linux exploitation and privilege escalation.","Used Nmap, Netcat and Kali Linux.","Earned 7 badges and worked through 3 learning paths."],
+     tt:"kali@thm: ~/rooms",tl:["$ nmap -sC -sV -oN nmap.txt 10.10.x.x","$ gobuster dir -u http://10.10.x.x -w common.txt","$ nc -lvnp 4444","# every room ends with a short write-up"]}],
+
+  contact:[["EMAIL","kerolosibram125@gmail.com","mailto:kerolosibram125@gmail.com"],["LOCATION","Cairo, Egypt",""],["LINKEDIN","linkedin.com/in/kerolos-ibrahim-saeed","https://www.linkedin.com/in/kerolos-ibrahim-saeed"],["TRYHACKME","kerolosibram125","https://tryhackme.com/p/kerolosibram125"],["GITHUB","github.com/Kerolosi","https://github.com/Kerolosi"]]
+};
+
+/* ====================================================================
+   SECTION BUILDERS (same builders feed the page and the World panels)
+   ==================================================================== */
+const bars = l => `<div class="bars">${[1,2,3].map(i=>`<div class="bar ${i<=l?"on":""}"></div>`).join("")}</div>`;
+const live = c => c ? `<span class="badge">In progress</span>` : "";
+
+function bAbout(){return `
+  <div class="about-grid">
+    <div>
+      <p>I study Information Technology at Assiut International Technological University (expected 2027) and train in offensive security through the DEPI Vulnerability Analyst &amp; Penetration Tester track.</p>
+      <p>I'm not a security expert yet, and I don't pretend to be. What I offer is careful, documented testing: I build the lab, break it on purpose, record what happened on the wire, and write down how to close the hole.</p>
+      <p>I explain findings so that both developers and managers understand them, and I say so when something is outside what I can do. I speak Arabic (native), English (intermediate) and German (A1).</p>
+      <div class="usp"><div>I help small businesses and teams find security weaknesses in their web applications and networks through hands-on penetration testing, and give clear steps to fix them.</div><hr><div dir="rtl">أساعد الشركات الصغيرة والفرق على اكتشاف الثغرات الأمنية في تطبيقات الويب والشبكات من خلال اختبارات اختراق عملية، مع خطوات واضحة لإصلاحها.</div></div>
+    </div>
+    <div>
+      <div class="focus-item"><span>Core study</span><span class="v">B.Sc. Information Technology</span></div>
+      <div class="focus-item"><span>Track</span><span class="v">Penetration Testing (DEPI)</span></div>
+      <div class="focus-item"><span>Hands-on in</span><span class="v">Web testing · Networks · AD labs</span></div>
+      <div class="focus-item"><span>Currently preparing</span><span class="v">eJPT · eWPT</span></div>
+      <div class="focus-item"><span>Working toward</span><span class="v">Junior penetration tester / security analyst</span></div>
+    </div>
+  </div>`}
+
+function bSkills(){return `
+  <div class="skills-cols">
+    <div><div class="gt">Skills, with where I practiced them</div>
+      ${DATA.skills.map(s=>`<div class="skill-row"><span class="n">${s.n}</span><span class="lv"><span>${DATA.levelLabel[s.l]}</span>${bars(s.l)}</span><span class="e">${s.e}</span></div>`).join("")}
+    </div>
+    <div>
+      <div class="gt">Tools I have used</div><div class="chips">${chips(DATA.toolsUsed)}</div>
+      <div class="gt" style="margin-top:1.8rem">Tools I'm learning</div><div class="chips">${chips(DATA.toolsLearn,"dash")}</div>
+      <div class="gt" style="margin-top:1.8rem">Languages and scripting</div><div class="chips">${chips(["Python","Bash","C#","C++","HTML & CSS"])}</div>
+      <div class="gt" style="margin-top:1.8rem">Spoken languages</div>${DATA.languages.map(l=>`<div class="lang-row"><span>${l[0]}</span><span class="v">${l[1]}</span></div>`).join("")}
+    </div>
+  </div>`}
+
+function bExperience(){return `<div class="timeline">${DATA.experience.map(e=>`
+  <div class="tl-item ${e.cur?"cur":""}"><div class="tl-when">${e.when} ${live(e.cur)}</div><div class="tl-role">${e.role}</div><div class="tl-org">${e.org}</div>
+  <ul class="tl-list">${e.pts.map(p=>`<li>${p}</li>`).join("")}</ul></div>`).join("")}</div>`}
+
+function bEducation(){const e=DATA.education;return `<div class="card"><div class="when">${e.when}</div><h3>${e.degree}</h3><div class="org">${e.org}</div><p class="mono" style="font-size:.82rem;color:var(--faint)">${e.major}</p></div>`}
+
+function bCerts(inModal){return `
+  <div class="grid2">
+    ${DATA.training.map(t=>`<div class="card ${t.cur?"cur":""}"><div class="when">${t.when} ${live(t.cur)}</div><h3>${t.title}</h3><div class="org">${t.org}</div><div class="topics">${t.topics.map(x=>`<span>${x}</span>`).join("")}</div></div>`).join("")}
+    ${DATA.progress.map(p=>`<div class="card dashed"><div class="when">In progress</div><h3>${p.title}</h3><div class="org">${p.org}</div><p>${p.note}</p></div>`).join("")}
+    <div class="card"><div class="when">${DATA.certs.length} completed</div><h3>Certificates</h3><p>${DATA.certs.slice(0,3).map(c=>c[1]).join(", ")} and more.</p>${inModal?"":`<a class="link-btn" href="#/certificates">See all certificates →</a>`}</div>
+  </div>`}
+
+function bServices(){return `<div class="grid3">${DATA.services.map(s=>`<div class="card"><h3>${s[0]}</h3><p>${s[1]}</p><div class="for">${s[2]}</div></div>`).join("")}</div><p class="note">I'm a student, so I take small, clearly scoped work. I only test systems I have written permission for, and we agree on scope before I start.</p>`}
+
+function bAchievements(){return `<div class="grid2">${DATA.achievements.map(a=>`<div class="card ${a.cur?"cur":""}"><h3>${a.t} ${live(a.cur)}</h3><p>${a.d}</p></div>`).join("")}</div>
+  <div class="gt" style="margin:2.4rem 0 1rem">How I work with you</div><div class="grid2">${DATA.process.map(p=>`<div class="card"><h3>${p[0]}</h3><p>${p[1]}</p></div>`).join("")}</div>`}
+
+function bProjects(){return `<div class="grid2">${DATA.projects.map(p=>`<article class="card pcard"><span class="cat">${p.cat}</span><h3>${p.title}</h3><p>${p.sum}</p><div class="chips">${chips(p.tech)}</div>${term(p.tt,p.tl,"sm")}<button class="btn pb" type="button" data-project="${p.id}" aria-haspopup="dialog">View Details →</button></article>`).join("")}</div>`}
+
+function bContact(inModal){return `
+  <div class="contact-in">
+    <div>${DATA.contact.map(c=>`<div class="crow"><span class="k">${c[0]}</span><span class="v">${c[2]?`<a href="${c[2]}" ${c[2].startsWith("http")?'target="_blank" rel="noreferrer"':""}>${c[1]}</a>`:c[1]}</span></div>`).join("")}</div>
+    <div class="panel"><p>Open to internships, junior roles and small security checks. Tell me what you need and I'll reply by email.</p>
+    ${inModal?`<a class="btn solid" style="width:100%" href="mailto:kerolosibram125@gmail.com">Email Kerolos</a>`:`
+    <form id="cf">
+      <div class="row2"><div><label for="n">Full name *</label><input id="n" required></div><div><label for="e">Email address *</label><input id="e" type="email" required></div></div>
+      <div class="row2"><div><label for="t">What do you need? *</label><select id="t" required><option>Internship / junior role</option><option>Web application security check</option><option>Vulnerability assessment (host or network)</option><option>Network segmentation / firewall review</option><option>Windows or Linux hardening checklist</option><option>Other</option></select></div>
+      <div><label for="w">When do you need it? <span class="hint">(optional)</span></label><select id="w"><option>Not sure yet</option><option>Within 2 weeks</option><option>Within 1 month</option><option>1-3 months</option></select></div></div>
+      <div id="otherBox" hidden><label for="o">Tell me what you need *</label><input id="o" placeholder="For example: security awareness session for my team"></div>
+      <div><label for="m">Details *</label><textarea id="m" rows="4" required placeholder="What system, website or role is it about?"></textarea></div>
+      <button class="send" type="submit">Send message</button>
+    </form>`}</div>
+  </div>`}
+
+const SECTIONS=[
+  {id:"about",title:"About",sub:"Grounded in fundamentals, moving toward the field",body:bAbout},
+  {id:"skills",title:"Skills",sub:"What I know, honestly leveled",lede:"No invented percentages: each skill is marked by how far along I am, with the work behind it.",body:bSkills,alt:1},
+  {id:"experience",title:"Experience",sub:"Where I've put this into practice",body:bExperience},
+  {id:"education",title:"Education",sub:"Foundation",body:bEducation,alt:1},
+  {id:"certifications",title:"Certifications & Training",sub:"Training & courses",lede:"Structured programs I'm in or have completed. Not a list of badges, just where the hours went.",body:bCerts},
+  {id:"services",title:"Services",sub:"Where I can help right now",lede:"Scoped to what I can actually deliver at this stage.",body:bServices,alt:1},
+  {id:"achievements",title:"Achievements",sub:"Milestones so far",lede:"Each item ties back to work listed in Experience or Projects.",body:bAchievements},
+  {id:"projects",title:"Projects",sub:"Real networking and hands-on cybersecurity work, with room to grow.",body:bProjects,alt:1},
+  {id:"contact",title:"Contact",sub:"Let's talk",body:bContact}
+];
+
+/* ---------- render page ---------- */
+$("stats").innerHTML=DATA.stats.map(s=>`<div><b>${s[0]}</b><span>${s[1]}</span></div>`).join("");
+$("heroTerm").innerHTML=term("kerolos@lab: ~",["$ whoami","kerolos, cybersecurity student","$ cat focus.txt","web / network / internal pentesting","$ cat status.txt","learning · building · documenting"]);
+$("sections").innerHTML=SECTIONS.map(s=>`<section class="s ${s.alt?"alt":""}" id="${s.id}"><div class="wrap"><div class="head" data-reveal><h2 class="title"><i></i>${s.title}</h2><p class="sub">${s.sub}</p>${s.lede?`<p class="lede">${s.lede}</p>`:""}</div><div class="body" data-reveal>${s.body(false)}</div></div></section>`).join("");
+
+/* certificates page */
+$("certList").innerHTML=DATA.certs.map(c=>`<div class="card"><div class="when"><span class="chip">${c[0]}</span></div><h3>${c[1]}</h3>${c[2]?`<p>${c[2]}</p>`:""}${c[3]?`<p class="mono" style="font-size:.76rem;color:var(--faint);margin-top:.4rem">${c[3]}</p>`:""}</div>`).join("");
+$("trainList").innerHTML=DATA.training.map(t=>`<div class="card"><div class="when">${t.when}</div><h3>${t.title}</h3><div class="org">${t.org}</div><div class="topics">${t.topics.map(x=>`<span>${x}</span>`).join("")}</div></div>`).join("");
+$("progList").innerHTML=DATA.progress.map(p=>`<div class="card dashed"><h3>${p.title}</h3><div class="org">${p.org}</div><p>${p.note}</p></div>`).join("");
+$("yr").textContent="© "+new Date().getFullYear()+" Kerolos Ibrahim Saeed. Cairo, Egypt.";
+
+/* nav */
+const NAV=[["about","About"],["skills","Skills"],["experience","Experience"],["education","Education"],["certifications","Certifications"],["services","Services"],["achievements","Achievements"],["projects","Projects"],["contact","Contact"]];
+$("navLinks").innerHTML=NAV.map(n=>`<a href="#${n[0]}" data-anchor>${n[1]}</a>`).join("")+`<a href="#/certificates">All certificates</a>`;
+$("mobileMenu").innerHTML=NAV.map(n=>`<a href="#${n[0]}" data-anchor>${n[1]}</a>`).join("")+`<a href="#/certificates">All certificates</a>`;
+
+/* ---------- project dialog ---------- */
+let lastFocus=null;
+function openProject(id){
+  const p=DATA.projects.find(x=>x.id===id); if(!p) return;
+  lastFocus=document.activeElement;
+  $("pmBody").innerHTML=`<span class="mono" style="font-size:.76rem;color:var(--faint)">${p.cat}</span>
+    <h2 class="title" id="pmTitle" style="margin-top:.4rem">${p.title}</h2>
+    <div class="chips" style="margin:1rem 0 1.4rem">${chips(p.tech)}</div>
+    <div class="pblock"><h4>What I did</h4><ul class="tl-list">${p.did.map(d=>`<li>${d}</li>`).join("")}</ul></div>
+    <div class="pblock"><h4>Commands from this work</h4>${term(p.tt,p.tl)}</div>
+    ${p.proofLines?`<div class="pblock"><h4>Lab run (credentials and flags redacted)</h4>${term(p.proofTitle,p.proofLines,"sm")}</div>`:""}
+    `;
+  $("projectModal").classList.add("open"); $("pmX").focus();
+}
+function closeProject(){$("projectModal").classList.remove("open");if(lastFocus&&lastFocus.focus)lastFocus.focus();}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-project]");if(b)openProject(b.dataset.project);});
+$("pmX").onclick=closeProject; $("pmBd").onclick=closeProject;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("projectModal").classList.contains("open")){e.stopImmediatePropagation();closeProject();}},true);
+
+/* ---------- contact form (FormSubmit AJAX Integration) ----------
+const cf=$("cf");
+$("t").addEventListener("change",()=>{const o=$("t").value==="Other";$("otherBox").hidden=!o;$("o").required=o;});
+cf.addEventListener("submit",e=>{
+  e.preventDefault();
+  const sendBtn = cf.querySelector("button.send");
+  const originalText = sendBtn.textContent;
+  
+  sendBtn.textContent = "Sending...";
+  sendBtn.disabled = true;
+
+  const topic = $("t").value === "Other" ? "Other: " + $("o").value : $("t").value;
+
+  fetch("https://formsubmit.co/ajax/kerolosibram125@gmail.com", {
+    method: "POST",
+    headers: { 
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      "Full Name": $("n").value,
+      "Sender Email": $("e").value,
+      "Request Topic": topic,
+      "Timeframe": $("w").value,
+      "Details / Message": $("m").value,
+      "_subject": "Portfolio Contact Form: " + topic
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    sendBtn.textContent = "Message Sent!";
+    sendBtn.style.background = "#22c55e";
+    sendBtn.style.color = "#ffffff";
+    cf.reset();
+    setTimeout(() => {
+      sendBtn.textContent = originalText;
+      sendBtn.style.background = "";
+      sendBtn.style.color = "";
+      sendBtn.disabled = false;
+    }, 4000);
+  })
+  .catch(err => {
+    alert("An error occurred while sending the message. Please try again.");
+    sendBtn.textContent = originalText;
+    sendBtn.disabled = false;
+  });
+});
+ */
+
+
+/* ---------- contact form (FormSubmit AJAX with Local Fallback) ---------- */
+const cf=$("cf");
+$("t").addEventListener("change",()=>{const o=$("t").value==="Other";$("otherBox").hidden=!o;$("o").required=o;});
+cf.addEventListener("submit",e=>{
+  e.preventDefault();
+  const sendBtn = cf.querySelector("button.send");
+  const originalText = sendBtn.textContent;
+  
+  sendBtn.textContent = "Sending...";
+  sendBtn.disabled = true;
+
+  const topic = $("t").value === "Other" ? "Other: " + $("o").value : $("t").value;
+
+  // تجهيز البيانات
+  const formData = new FormData();
+  formData.append("Full Name", $("n").value);
+  formData.append("Sender Email", $("e").value);
+  formData.append("Request Topic", topic);
+  formData.append("Timeframe", $("w").value);
+  formData.append("Details / Message", $("m").value);
+  formData.append("_subject", "Portfolio Contact Form: " + topic);
+  formData.append("_captcha", "false");
+
+  // محاولة الإرسال الخفي
+  fetch("https://formsubmit.co/ajax/kerolosibram125@gmail.com", {
+    method: "POST",
+    headers: { 'Accept': 'application/json' },
+    body: formData
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("CORS or Network issue");
+    return res.json();
+  })
+  .then(data => {
+    sendBtn.textContent = "Message Sent!";
+    sendBtn.style.background = "#22c55e";
+    sendBtn.style.color = "#ffffff";
+    cf.reset();
+    setTimeout(() => {
+      sendBtn.textContent = originalText;
+      sendBtn.style.background = "";
+      sendBtn.style.color = "";
+      sendBtn.disabled = false;
+    }, 4000);
+  })
+  .catch(err => {
+    // خطة بديلة: لو شغّال محلياً والمتصفح حظر الـ AJAX، نرسل عبر الـ Form المباشر
+    const hiddenForm = document.createElement("form");
+    hiddenForm.method = "POST";
+    hiddenForm.action = "https://formsubmit.co/kerolosibram125@gmail.com";
+    
+    for (let [key, value] of formData.entries()) {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = value;
+      hiddenForm.appendChild(input);
+    }
+    
+    document.body.appendChild(hiddenForm);
+    hiddenForm.submit();
+  });
+});
+
+/* ---------- theme ---------- */
+const root=document.documentElement;
+const eff=()=>root.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+const paint=()=>{$("theme").textContent=eff()==="dark"?"Light mode":"Dark mode";};
+try{const s=localStorage.getItem("theme");if(s)root.dataset.theme=s;}catch(e){}
+paint();
+$("theme").onclick=()=>{const n=eff()==="dark"?"light":"dark";root.dataset.theme=n;try{localStorage.setItem("theme",n);}catch(e){}paint();};
+
+/* ---------- mobile menu ---------- */
+const mm=$("mobileMenu");
+function setMenu(o){mm.classList.toggle("open",o);$("burger").setAttribute("aria-expanded",o);$("burger").textContent=o?"✕":"≡";}
+$("burger").onclick=()=>setMenu(!mm.classList.contains("open"));
+mm.addEventListener("click",e=>{if(e.target.closest("a"))setMenu(false);});
+
+/* ---------- routing + anchors ---------- */
+function route(){
+  const c=location.hash.startsWith("#/certificates");
+  $("home").hidden=c; $("certs").hidden=!c; $("rail").style.visibility=c?"hidden":"visible";
+  if(c)scrollTo(0,0);
+}
+document.addEventListener("click",e=>{
+  const a=e.target.closest("a[data-anchor]");
+  if(a){
+    e.preventDefault();
+    const go=()=>{const el=document.querySelector(a.getAttribute("href"));if(el)el.scrollIntoView({behavior:"smooth"});};
+    if(location.hash.startsWith("#/certificates")){location.hash="#/";setTimeout(go,60);}else go();
+  }
+  if(e.target.closest("a[data-home]")){e.preventDefault();location.hash="#/";scrollTo(0,0);}
+});
+addEventListener("hashchange",route); route();
+
+/* ---------- scroll reveal ---------- */
+const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add("in");io.unobserve(x.target);}}),{threshold:.12});
+document.querySelectorAll("[data-reveal]").forEach(el=>io.observe(el));
+
+/* ---------- rail ---------- */
+const RAIL=["top",...SECTIONS.map(s=>s.id)];
+RAIL.forEach(id=>{
+  const d=document.createElement("div");d.className="rail-dot";d.dataset.id=id;d.title=id;
+  d.onclick=()=>$(id).scrollIntoView({behavior:"smooth"});$("railDots").appendChild(d);
+});
+function updRail(){
+  let cur=RAIL[0];
+  RAIL.forEach(id=>{const r=$(id).getBoundingClientRect();if(r.top<innerHeight*.5)cur=id;});
+  document.querySelectorAll(".rail-dot").forEach(d=>d.classList.toggle("active",d.dataset.id===cur));
+  $("railFill").style.height=(RAIL.indexOf(cur)/(RAIL.length-1))*80+"%";
+}
+addEventListener("scroll",updRail,{passive:true}); updRail();
+
+/* ---------- hero network background (uses the page text color) ---------- */
+(function(){
+  const cv=$("heroCanvas"),ctx=cv.getContext("2d"),hero=document.querySelector(".hero");
+  const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let w,h,nodes=[];
+  function init(){w=cv.width=hero.clientWidth;h=cv.height=hero.clientHeight;
+    const n=w<640?9:Math.max(16,Math.floor(w/90));nodes=[];
+    for(let i=0;i<n;i++)nodes.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.14,vy:(Math.random()-.5)*.14});}
+  init();addEventListener("resize",init);
+  function draw(){
+    ctx.clearRect(0,0,w,h);ctx.strokeStyle="currentColor";ctx.fillStyle="currentColor";
+    nodes.forEach((a,i)=>{
+      if(!reduced){a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>w)a.vx*=-1;if(a.y<0||a.y>h)a.vy*=-1;}
+      for(let j=i+1;j<nodes.length;j++){const b=nodes[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d<170){ctx.globalAlpha=(1-d/170)*.22;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}}
+      ctx.globalAlpha=.4;ctx.beginPath();ctx.arc(a.x,a.y,1.8,0,7);ctx.fill();
+    });
+    ctx.globalAlpha=1;
+    if(!reduced)requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
